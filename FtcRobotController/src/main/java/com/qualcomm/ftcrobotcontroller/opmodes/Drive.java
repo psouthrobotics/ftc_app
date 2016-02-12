@@ -3,6 +3,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 
@@ -20,7 +21,7 @@ public class Drive extends LinearOpMode {
     }
     //To satisfy interface
     public void runOpMode(){}
-
+    //TODO add a pivot that usees gyro
     public void go(double time) throws InterruptedException{
         DbgLog.msg("Driving Forward-Beginning");
         drive(time, 0);
@@ -148,6 +149,20 @@ public class Drive extends LinearOpMode {
             sleep(dt);
         }
         DbgLog.msg("Finished While Loop for Driving");
+
+    }
+    //TODO see if this works if so make a teleop using encoders
+    public void driveE (int inches) throws InterruptedException{
+        DbgLog.msg("-------------------Encoder Drive Test---------------");
+        mapHardware();
+        //reversing motors as needed
+        setDirection("FORWARD");
+        int revolutions = inches/12;
+        int targetTicks = revolutions * 1440;
+        leftMotor.setTargetPosition(targetTicks);
+        DbgLog.msg("Changing left motor mode to run to position");
+        leftMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        DbgLog.msg("Mode Change Complete @target position MAYEB");
 
     }
 
