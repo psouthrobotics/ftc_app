@@ -72,14 +72,14 @@ public class Drive extends LinearOpMode {
         DbgLog.msg("Mapped All Hardware");
     }
     public void setDirection(String direction){
-        if (direction == "FORWARD") {
+        if (direction.equals("FORWARD")) {
             rightMotor.setDirection(DcMotor.Direction.REVERSE);
             rightTank.setDirection(DcMotor.Direction.FORWARD);
             leftTank.setDirection(DcMotor.Direction.FORWARD);
             leftMotor.setDirection(DcMotor.Direction.FORWARD);
             DbgLog.msg("Set Direction Forward");
         }
-        if (direction == "BACKWARD") {
+        if (direction.equals("BACKWARDS")) {
             rightMotor.setDirection(DcMotor.Direction.FORWARD);
             rightTank.setDirection(DcMotor.Direction.REVERSE);
             leftTank.setDirection(DcMotor.Direction.REVERSE);
