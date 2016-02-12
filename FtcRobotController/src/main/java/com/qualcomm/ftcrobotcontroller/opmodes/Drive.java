@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 
 
-public class DriveWithoutEncoders extends LinearOpMode {
+public class Drive extends LinearOpMode {
     DcMotor leftMotor;
     DcMotor rightMotor;
     DcMotor leftTank;
@@ -14,21 +14,62 @@ public class DriveWithoutEncoders extends LinearOpMode {
 
     GyroSensor gyro;
 
-    public DriveWithoutEncoders() {
+    public Drive() {
 
     }
     //To satisfy interface
     public void runOpMode(){}
 
-    //t is time x is direction
+    public void go(double time) throws InterruptedException{
+        drive(time, 0);
+    }
     public void goT(double time, double turningRate) throws InterruptedException{
-
+        drive(time, turningRate);
+    }
+    public void goB(double time) throws InterruptedException {
+        setDirection("BACKWARD");
+        drive(time, 0);
+        setDirection("FORWARD");
+    }
+    public void goTB(double time, double turningRate) throws InterruptedException {
+        setDirection("BACKWARD");
+        drive(time, turningRate);
+        setDirection("FORWARD");
+    }
+    public void halt(){
+        leftMotor.setPower(0);
+        rightMotor.setPower(0);
+        leftTank.setPower(0);
+        rightTank.setPower(0);
+    }
+    public void mapHardware(){
+        leftMotor = hardwareMap.dcMotor.get("left_Motor");
+        rightMotor = hardwareMap.dcMotor.get("right_Motor");
+        leftTank = hardwareMap.dcMotor.get("left_tank");
+        rightTank = hardwareMap.dcMotor.get("right_tank");
+        gyro = hardwareMap.gyroSensor.get("gy");
+    }
+    public void setDirection(String direction){
+        if (direction == "FORWARD") {
+            rightMotor.setDirection(DcMotor.Direction.REVERSE);
+            rightTank.setDirection(DcMotor.Direction.FORWARD);
+            leftTank.setDirection(DcMotor.Direction.FORWARD);
+            leftMotor.setDirection(DcMotor.Direction.FORWARD);
+        }
+        if (direction == "BACKWARD") {
+            rightMotor.setDirection(DcMotor.Direction.FORWARD);
+            rightTank.setDirection(DcMotor.Direction.REVERSE);
+            leftTank.setDirection(DcMotor.Direction.REVERSE);
+            leftMotor.setDirection(DcMotor.Direction.REVERSE);
+        }
+    }
+    public void drive(double duration, double turn) throws InterruptedException{
         mapHardware();
         //reversing motors as needed
-        setDirection();
+        setDirection("FORWARD");
         //setting straight value
         //below is left above is right
-        double straight = 575 + turningRate;
+        double straight = 575 + turn;
         //setting drive speed
         double lSpeed = 0.6;
         double rSpeed = lSpeed;
@@ -43,7 +84,7 @@ public class DriveWithoutEncoders extends LinearOpMode {
         double integral = 0;
         double previous_error = 0;
         //timer to run loop for given amount of time
-        while (System.currentTimeMillis() - start_time < time) {
+        while (System.currentTimeMillis() - start_time < duration) {
             //error is how far off a straight value is to use for calculating corrections
             double error = straight - gyro.getRotation();
             //dividing error because motor speed is in percentage
@@ -76,25 +117,6 @@ public class DriveWithoutEncoders extends LinearOpMode {
             sleep(dt);
         }
 
-    }
-    public void halt(){
-        leftMotor.setPower(0);
-        rightMotor.setPower(0);
-        leftTank.setPower(0);
-        rightTank.setPower(0);
-    }
-    public void mapHardware(){
-        leftMotor = hardwareMap.dcMotor.get("left_Motor");
-        rightMotor = hardwareMap.dcMotor.get("right_Motor");
-        leftTank = hardwareMap.dcMotor.get("left_tank");
-        rightTank = hardwareMap.dcMotor.get("right_tank");
-        gyro = hardwareMap.gyroSensor.get("gy");
-    }
-    public void setDirection(){
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightTank.setDirection(DcMotor.Direction.FORWARD);
-        leftTank.setDirection(DcMotor.Direction.FORWARD);
-        leftMotor.setDirection(DcMotor.Direction.FORWARD);
     }
 
 }
